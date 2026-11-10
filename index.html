@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>A Little Mission for You</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cpath fill='%23c9234b' d='M16 28.5S3.5 20.6 3.5 11.4A6.9 6.9 0 0 1 16 7.3a6.9 6.9 0 0 1 12.5 4.1C28.5 20.6 16 28.5 16 28.5Z'/%3E%3Cpath fill='%23ffd6e5' d='M10.8 9.2a2.6 2.6 0 0 0-3.3 2.5c0 .7.6 1 1 .4a2.3 2.3 0 0 1 2.3-1.5c.6 0 .7-1.2 0-1.4Z'/%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:ital,wght@0,500;0,600;0,700;0,800;1,500;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="game.js"></script>
+</head>
+<body>
+  <!-- Animated Cozy Sky Backdrop -->
+  <div class="sky-backdrop" aria-hidden="true">
+    <div class="sky-clouds">
+      <svg class="cloud cloud-1" viewBox="0 0 220 96" fill="none">
+        <path d="M38 78h144c19 0 32-12 32-27 0-14-11-25-25-27-4-14-17-24-33-24-12 0-23 6-29 15-6-4-13-7-22-7-17 0-31 12-34 28-18 1-33 14-33 30 0 8 0 12 0 12Z" fill="#ffffff" fill-opacity="0.9"/>
+        <path d="M44 78h134c16 0 28-8 31-18-9 6-20 9-33 9H46c-12 0-22-3-30-9 3 11 14 18 28 18Z" fill="#cde8ff" fill-opacity="0.72"/>
+      </svg>
+      <svg class="cloud cloud-2" viewBox="0 0 190 84" fill="none">
+        <path d="M30 70h128c16 0 28-10 28-24 0-12-9-22-22-24-4-12-15-21-29-21-10 0-20 5-25 13-5-4-12-6-19-6-15 0-27 11-30 25-16 1-29 12-29 26 0 6-2 11-2 11Z" fill="#ffffff" fill-opacity="0.86"/>
+        <path d="M35 70h118c14 0 25-7 27-16-8 5-18 8-29 8H37c-10 0-19-3-26-8 3 9 12 16 24 16Z" fill="#d9efff" fill-opacity="0.78"/>
+      </svg>
+      <svg class="cloud cloud-3" viewBox="0 0 210 90" fill="none">
+        <path d="M36 74h138c18 0 30-11 30-25 0-13-10-23-24-25-4-14-16-23-31-23-11 0-21 5-27 14-6-4-13-7-21-7-16 0-29 12-32 27-17 1-31 13-31 28 0 7-2 11-2 11Z" fill="#ffffff" fill-opacity="0.82"/>
+        <path d="M40 74h129c15 0 27-7 29-17-9 5-19 8-31 8H42c-11 0-21-3-28-8 3 10 13 17 26 17Z" fill="#ffe2ee" fill-opacity="0.72"/>
+      </svg>
+    </div>
+    <div class="sky-stars" id="sky-stars"></div>
+    <div class="sky-hearts" id="sky-hearts"></div>
+  </div>
+
+  <!-- Main Game Application Shell -->
+  <div class="app-shell">
+    <!-- Game HUD Header -->
+    <header class="game-hud" aria-label="Game status and controls">
+      <div class="hud-brand">
+        <span class="hud-emblem" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="18" height="18">
+            <path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+        </span>
+        <span class="hud-title">A Little Mission for You</span>
+      </div>
+
+      <!-- Mission Step Indicator -->
+      <ol class="mission-steps" id="mission-steps" aria-label="Mission progress">
+        <li class="step-pip" data-step="identity" aria-current="step">
+          <span class="pip-dot" aria-hidden="true"></span>
+          <span class="pip-label">ID</span>
+        </li>
+        <li class="step-pip" data-step="start">
+          <span class="pip-dot" aria-hidden="true"></span>
+          <span class="pip-label">Start</span>
+        </li>
+        <li class="step-pip" data-step="level1">
+          <span class="pip-dot" aria-hidden="true"></span>
+          <span class="pip-label">Lv.1</span>
+        </li>
+        <li class="step-pip" data-step="level2">
+          <span class="pip-dot" aria-hidden="true"></span>
+          <span class="pip-label">Lv.2</span>
+        </li>
+        <li class="step-pip" data-step="letter">
+          <span class="pip-dot" aria-hidden="true"></span>
+          <span class="pip-label">Letter</span>
+        </li>
+      </ol>
+
+      <!-- Utility Controls -->
+      <div class="hud-controls">
+        <button type="button" class="hud-btn" id="sound-toggle" aria-pressed="true" aria-label="Mute sound effects">
+          <svg class="hud-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path class="icon-sound-on" fill="currentColor" d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+            <path class="icon-sound-off" fill="currentColor" d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51A8.796 8.796 0 0 0 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06a8.99 8.99 0 0 0 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+          </svg>
+          <span class="hud-btn-text" id="sound-toggle-label">Sound</span>
+        </button>
+
+        <button type="button" class="hud-btn" id="motion-toggle" aria-label="Pause background animation">
+          <svg class="hud-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path class="icon-pause" fill="currentColor" d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            <path class="icon-play" fill="currentColor" d="M8 5v14l11-7z"/>
+          </svg>
+          <span class="hud-btn-text" id="motion-toggle-label">Pause</span>
+        </button>
+
+        <button type="button" class="hud-btn hud-btn-restart" id="restart-btn" aria-label="Restart the game">
+          <svg class="hud-icon" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path fill="currentColor" d="M17.65 6.35A7.958 7.958 0 0 0 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08A5.99 5.99 0 0 1 12 18c-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+          </svg>
+          <span class="hud-btn-text">Restart</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Centralized Screen-Reader Live Announcer -->
+    <div class="visually-hidden" id="live-announcer" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Main Game Stage -->
+    <main class="game-stage" id="game-stage">
+
+      <!-- SCREEN 0: IDENTITY VERIFICATION -->
+      <section class="screen screen-identity" id="screen-identity" aria-labelledby="identity-heading">
+        <!-- Subtle floating corner hearts inside the secret gate -->
+        <div class="gate-floating-hearts" aria-hidden="true">
+          <span class="gate-heart gate-heart-1">♥</span>
+          <span class="gate-heart gate-heart-2">♥</span>
+          <span class="gate-heart gate-heart-3">✦</span>
+          <span class="gate-heart gate-heart-4">♥</span>
+        </div>
+
+        <!-- Name Entry View -->
+        <div class="identity-subview" id="identity-form-view">
+          <div class="badge-pill badge-sky">
+            <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+              <path fill="currentColor" d="M8 1a4 4 0 0 0-4 4v2H3a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V8a1 1 0 0 0-1-1h-1V5a4 4 0 0 0-4-4Zm-2.5 6V5a2.5 2.5 0 0 1 5 0v2h-5Z"/>
+            </svg>
+            <span>Secret Access Gate</span>
+          </div>
+
+          <div class="gate-emblem" aria-hidden="true">
+            <svg class="gate-svg" viewBox="0 0 120 112" width="108" height="100">
+              <ellipse cx="60" cy="103" rx="30" ry="5.5" fill="#e9adc4" fill-opacity="0.45"/>
+              <g class="gate-lock-body">
+                <!-- Padlock shackle -->
+                <path d="M40 46V31c0-11 9-20 20-20s20 9 20 20v15" fill="none" stroke="#5c98cf" stroke-width="8" stroke-linecap="round"/>
+                <!-- Heart lock body -->
+                <path d="M60 95S21 71 21 47.5C21 35 31 25.5 43.2 25.5c7.2 0 13 3.4 16.8 8.6 3.8-5.2 9.6-8.6 16.8-8.6C89 25.5 99 35 99 47.5 99 71 60 95 60 95Z" fill="#e0315b" stroke="#991437" stroke-width="3.2" stroke-linejoin="round"/>
+                <!-- Keyhole -->
+                <circle cx="60" cy="54" r="6" fill="#fff5f8"/>
+                <path d="M57 58h6l1.5 12h-9L57 58Z" fill="#fff5f8"/>
+                <!-- Cute shine -->
+                <path d="M36 37c-4 1-7 4.8-7.4 9.5-.1 1.6 2 2 2.4.5.7-2.6 2.7-5 5.4-6 1.5-.5 1.1-4.3-.4-4Z" fill="#ff9ebb" fill-opacity="0.8"/>
+              </g>
+            </svg>
+          </div>
+
+          <h1 class="hero-heading" id="identity-heading" tabindex="-1">WHO ARE YOU? ♥</h1>
+          <p class="hero-subtitle">Before entering this little world, identify yourself.</p>
+
+          <form class="identity-form" id="identity-form" novalidate aria-labelledby="identity-heading">
+            <div class="identity-field">
+              <label class="identity-label" for="identity-name">
+                Your Name <span aria-hidden="true">*</span>
+              </label>
+              <input
+                type="text"
+                id="identity-name"
+                name="name"
+                class="identity-input"
+                placeholder="Enter your name..."
+                autocomplete="given-name"
+                spellcheck="false"
+                enterkeyhint="go"
+                required
+                aria-invalid="false"
+                data-error="identity-error"
+              >
+              <div id="identity-error" class="identity-error" hidden>
+                <span class="error-badge" role="img" aria-label="Error">!</span>
+                <span id="identity-error-text">Please enter your name first ♥</span>
+              </div>
+            </div>
+
+            <div class="action-row">
+              <button type="submit" class="btn-primary btn-lg" id="identity-submit-btn">LET ME IN ♥</button>
+            </div>
+          </form>
+
+          <p class="identity-footer-note">Only one special person is allowed here.</p>
+        </div>
+
+        <!-- Access Granted View -->
+        <div class="identity-subview access-card access-granted" id="identity-success-view" hidden>
+          <div class="badge-pill badge-sky">★ IDENTITY CONFIRMED ★</div>
+
+          <div class="gate-emblem" aria-hidden="true">
+            <svg class="access-svg" viewBox="0 0 120 110" width="106" height="96">
+              <path d="M60 98S14 69 14 39.5C14 24.8 25.8 13.5 40 13.5c8.4 0 15.2 4 20 10.2 4.8-6.2 11.6-10.2 20-10.2 14.2 0 26 11.3 26 26C106 69 60 98 60 98Z" fill="#d62851" stroke="#991437" stroke-width="3.2" stroke-linejoin="round"/>
+              <path d="M44 52l11 11 22-24" fill="none" stroke="#ffffff" stroke-width="6.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+
+          <h2 class="access-heading" id="identity-success-heading" tabindex="-1">ACCESS GRANTED ♥</h2>
+          <p class="access-greeting">Well, hello Rohan!</p>
+          <p class="section-subtitle">We were waiting for you. Your little adventure begins now...</p>
+
+          <div class="action-row">
+            <button type="button" class="btn-primary btn-lg" id="enter-world-btn">ENTER MY WORLD</button>
+          </div>
+        </div>
+
+        <!-- Access Denied View -->
+        <div class="identity-subview access-card access-denied" id="identity-denied-view" hidden>
+          <div class="badge-pill badge-pink">★ RESTRICTED ACCESS ★</div>
+
+          <div class="gate-emblem" aria-hidden="true">
+            <svg class="access-svg" viewBox="0 0 120 110" width="106" height="96">
+              <path d="M60 98S14 69 14 39.5C14 24.8 25.8 13.5 40 13.5c8.4 0 15.2 4 20 10.2 4.8-6.2 11.6-10.2 20-10.2 14.2 0 26 11.3 26 26C106 69 60 98 60 98Z" fill="#ffe1ec" stroke="#bd1e45" stroke-width="3.2" stroke-linejoin="round"/>
+              <path d="M46 42l28 28M74 42L46 70" fill="none" stroke="#bd1e45" stroke-width="6" stroke-linecap="round"/>
+            </svg>
+          </div>
+
+          <h2 class="access-heading" id="identity-denied-heading" tabindex="-1">ACCESS DENIED!</h2>
+          <p class="denied-subhead">GAME NOT MEANT FOR YOU.</p>
+          <p class="section-subtitle">Sorry, this little world belongs to someone special. Nice try though!</p>
+
+          <div class="action-row">
+            <button type="button" class="btn-primary btn-lg" id="try-again-btn">TRY AGAIN</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN 1: START -->
+      <section class="screen screen-start" id="screen-start" aria-labelledby="start-heading" hidden>
+        <div class="badge-pill badge-sky">
+          <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+            <path fill="currentColor" d="M8 1l1.8 4.4L14.5 6l-3.5 3.1 1 4.6L8 11.3 4 13.7l1-4.6L1.5 6l4.7-.6L8 1z"/>
+          </svg>
+          <span>Secret Mini-Game</span>
+        </div>
+
+        <div class="mascot-stage">
+          <svg class="mascot-svg" viewBox="0 0 160 132" width="160" height="132" role="img" aria-label="Cute heart character holding a blue envelope">
+            <!-- Soft drop shadow on ground -->
+            <ellipse cx="80" cy="122" rx="36" ry="7" fill="#e9adc4" fill-opacity="0.45"/>
+            <!-- Orbiting tiny stars -->
+            <path class="mascot-star mascot-star-1" d="M26 30l2.3 5.7 6 .7-4.5 4 1.3 5.9-5.1-3.1-5.1 3.1 1.3-5.9-4.5-4 6-.7L26 30z" fill="#77b6ea"/>
+            <path class="mascot-star mascot-star-2" d="M134 24l1.9 4.5 4.8.6-3.6 3.2 1 4.7-4.1-2.5-4.1 2.5 1-4.7-3.6-3.2 4.8-.6L134 24z" fill="#ff9ebe"/>
+            <!-- Plump heart character -->
+            <g class="mascot-body">
+              <path d="M80 112S30 81 30 47.5C30 30.8 43.2 18 59.4 18c9.3 0 16.5 4.4 20.6 10.7C84.1 22.4 91.3 18 100.6 18 116.8 18 130 30.8 130 47.5 130 81 80 112 80 112Z" fill="#e0315b" stroke="#9e1b3b" stroke-width="3.5" stroke-linejoin="round"/>
+              <!-- Glossy highlight -->
+              <path d="M51 32c-6 1.5-10.5 6.8-11 13.5-.2 2.4 3 3 3.6.7 1-3.8 4-7.4 8-8.8 2.1-.8 1.5-5.9-.6-5.4Z" fill="#ff9ab5" fill-opacity="0.75"/>
+              <!-- Cute eyes -->
+              <circle cx="64" cy="54" r="4.5" fill="#3a1020"/>
+              <circle cx="96" cy="54" r="4.5" fill="#3a1020"/>
+              <circle cx="62.5" cy="52.3" r="1.6" fill="#ffffff"/>
+              <circle cx="94.5" cy="52.3" r="1.6" fill="#ffffff"/>
+              <!-- Blush cheeks -->
+              <ellipse cx="53" cy="62" rx="5.5" ry="3.2" fill="#ff9eb8" fill-opacity="0.85"/>
+              <ellipse cx="107" cy="62" rx="5.5" ry="3.2" fill="#ff9eb8" fill-opacity="0.85"/>
+              <!-- Sweet smile -->
+              <path d="M74.5 61.5c1.5 3 9.5 3 11 0" stroke="#3a1020" stroke-width="2.6" stroke-linecap="round" fill="none"/>
+              <!-- Tiny letter held in front -->
+              <g transform="translate(56 72) rotate(-4)">
+                <rect x="0" y="0" width="48" height="32" rx="6" fill="#eef7ff" stroke="#5c98cf" stroke-width="2.5"/>
+                <path d="M2 3l22 15L46 3" stroke="#5c98cf" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                <circle cx="24" cy="17" r="5" fill="#c9234b"/>
+              </g>
+            </g>
+          </svg>
+        </div>
+
+        <h1 class="hero-heading" id="start-heading" tabindex="-1">
+          Hey, you!<br>
+          Someone has a tiny mission for you...
+        </h1>
+        <p class="hero-subtitle">Wanna play a little game?</p>
+
+        <div class="action-row">
+          <button type="button" class="btn-primary btn-lg" id="start-play-btn">
+            <span>Let's Play ♥</span>
+          </button>
+        </div>
+
+        <p class="mini-note">Complete 2 mini challenges to unlock your surprise</p>
+      </section>
+
+      <!-- LEVEL 1: CATCH MY HEARTS -->
+      <section class="screen screen-level1" id="screen-level1" aria-labelledby="level1-heading" hidden>
+        <div class="screen-top">
+          <div class="badge-pill badge-pink">Level 1 • Catch My Hearts</div>
+          <h1 class="section-heading" id="level1-heading" tabindex="-1">Catch the floating hearts!</h1>
+          <p class="section-subtitle">Click or tap all 5 gently drifting hearts to collect them.</p>
+        </div>
+
+        <div class="collector-bar">
+          <p class="counter-pill" id="heart-counter-text">Hearts collected: 0/5</p>
+          <div class="heart-slots" id="heart-slots" aria-hidden="true">
+            <span class="heart-slot" data-slot="0">♥</span>
+            <span class="heart-slot" data-slot="1">♥</span>
+            <span class="heart-slot" data-slot="2">♥</span>
+            <span class="heart-slot" data-slot="3">♥</span>
+            <span class="heart-slot" data-slot="4">♥</span>
+          </div>
+        </div>
+
+        <div class="heart-arena" id="heart-arena">
+          <div class="arena-clouds" aria-hidden="true">
+            <span class="arena-puff arena-puff-left"></span>
+            <span class="arena-puff arena-puff-right"></span>
+          </div>
+          <!-- Floating heart buttons injected/managed by JS -->
+          <div class="arena-hearts-layer" id="arena-hearts-layer"></div>
+          <!-- Pop particles layer -->
+          <div class="arena-burst-layer" id="arena-burst-layer" aria-hidden="true"></div>
+
+          <!-- Level 1 Completion Overlay Card inside Arena -->
+          <div class="level1-complete" id="level1-complete" hidden>
+            <div class="celebrate-icon" aria-hidden="true">💖✨</div>
+            <h2 class="complete-heading">Yay! You found all my hearts!</h2>
+            <p class="complete-sub">Ready for the next little step?</p>
+            <button type="button" class="btn-primary" id="to-level2-btn">Next Surprise</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- LEVEL 2: A LITTLE QUIZ -->
+      <section class="screen screen-level2" id="screen-level2" aria-labelledby="level2-heading" hidden>
+        <div class="screen-top">
+          <div class="badge-pill badge-sky">Level 2 • A Little Quiz</div>
+          <h1 class="section-heading" id="level2-heading" tabindex="-1">Just 3 tiny questions</h1>
+          <div class="quiz-progress-row">
+            <span class="quiz-step-label" id="quiz-step-label">Question 1 of 3</span>
+            <div class="quiz-pips" id="quiz-pips" aria-hidden="true">
+              <span class="quiz-pip is-active"></span>
+              <span class="quiz-pip"></span>
+              <span class="quiz-pip"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quiz Active Question Card -->
+        <div class="quiz-card" id="quiz-card">
+          <h2 class="quiz-question" id="quiz-question-text">Who is the most dramatic person?</h2>
+          <div class="quiz-options" id="quiz-options" role="group" aria-labelledby="quiz-question-text">
+            <!-- Buttons injected dynamically -->
+          </div>
+
+          <div class="reaction-box" id="quiz-reaction-box" hidden>
+            <div class="reaction-avatar" aria-hidden="true">
+              <svg viewBox="0 0 40 40" width="36" height="36">
+                <path fill="#e0315b" d="M20 35S5 25.5 5 14.5A8.5 8.5 0 0 1 20 9.4a8.5 8.5 0 0 1 15 5.1C35 25.5 20 35 20 35Z"/>
+                <circle cx="15" cy="17" r="1.8" fill="#3a1020"/>
+                <circle cx="25" cy="17" r="1.8" fill="#3a1020"/>
+                <path d="M17.5 20.5c1 1.4 4 1.4 5 0" stroke="#3a1020" stroke-width="1.6" stroke-linecap="round" fill="none"/>
+              </svg>
+            </div>
+            <p class="reaction-text" id="quiz-reaction-text"></p>
+          </div>
+
+          <div class="quiz-next-wrap" id="quiz-next-wrap" hidden>
+            <button type="button" class="btn-primary" id="quiz-next-btn">Next Question</button>
+          </div>
+        </div>
+
+        <!-- Quiz Completed State -->
+        <div class="quiz-complete" id="quiz-complete" hidden>
+          <div class="qualification-badge" aria-hidden="true">
+            <span class="badge-ribbon">★ OFFICIAL PASS ★</span>
+          </div>
+          <h2 class="complete-heading">Okay, you're officially qualified for your surprise!</h2>
+          <p class="complete-sub">Score: 100% Loved &amp; Extra Special ♥</p>
+          <div class="action-row">
+            <button type="button" class="btn-primary btn-lg" id="unlock-letter-btn">Unlock My Letter</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- FINAL SCREEN: THE LETTER -->
+      <section class="screen screen-letter" id="screen-letter" aria-labelledby="letter-heading" hidden>
+        <div class="screen-top">
+          <div class="badge-pill badge-pink">Final Chapter • Secret Letter</div>
+          <h1 class="section-heading" id="letter-heading" tabindex="-1">You've unlocked a little something...</h1>
+        </div>
+
+        <!-- Sealed Interactive Envelope -->
+        <div class="envelope-stage" id="envelope-stage">
+          <button
+            type="button"
+            class="envelope-trigger"
+            id="envelope-btn"
+            aria-expanded="false"
+            aria-controls="letter-paper"
+            aria-label="Open the envelope to read your secret letter"
+          >
+            <span class="envelope-scene" aria-hidden="true">
+              <span class="envelope-glow"></span>
+              <span class="envelope-wrapper" id="envelope-wrapper">
+                <!-- Back pocket -->
+                <span class="env-back"></span>
+                <!-- Peeking miniature letter top -->
+                <span class="env-mini-letter">
+                  <span class="mini-line mini-line-1"></span>
+                  <span class="mini-line mini-line-2"></span>
+                  <span class="mini-line mini-line-3"></span>
+                </span>
+                <!-- Front lower folds -->
+                <span class="env-front-left"></span>
+                <span class="env-front-right"></span>
+                <span class="env-front-bottom"></span>
+                <!-- Top animated flap -->
+                <span class="env-flap"></span>
+                <!-- Heart wax seal -->
+                <span class="env-seal">
+                  <svg viewBox="0 0 24 24" width="22" height="22">
+                    <path fill="#fff5f8" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                  </svg>
+                </span>
+              </span>
+              <span class="envelope-sparkle env-sp-1">✦</span>
+              <span class="envelope-sparkle env-sp-2">♥</span>
+              <span class="envelope-sparkle env-sp-3">✦</span>
+            </span>
+            <span class="envelope-cta-pill" id="envelope-cta-text">Tap the envelope to open ♥</span>
+          </button>
+        </div>
+
+        <!-- Revealed Letter Stationery -->
+        <article class="letter-paper" id="letter-paper" hidden>
+          <div class="letter-header-decor" aria-hidden="true">
+            <span class="stamp-blue">SPECIAL DELIVERY ♥</span>
+            <span class="postmark-stars">✦ ♡ ✦</span>
+          </div>
+
+          <div class="letter-body">
+            <p class="letter-salutation">Hey Rohan,</p>
+            <p>
+              I know things aren't quite okay right now, and I just wanted to say I'm sorry. I might not always express myself perfectly, and sometimes things get complicated, but that doesn't mean you matter any less to me.
+            </p>
+            <p>
+              I don't expect everything to become okay instantly. I just wanted to remind you that you are important to me, and I never want a little misunderstanding to overshadow all the beautiful moments we've shared.
+            </p>
+            <p>
+              Here's a tiny piece of my heart for you.
+            </p>
+          </div>
+
+          <!-- Four-Line Poem -->
+          <figure class="poem-card">
+            <blockquote class="poem-lines" lang="hi-Latn">
+              <p>
+                Thodi si zid thi, thodi nadaani thi,<br>
+                Par dil mein toh bas teri hi kahaani thi.<br>
+                Narazgi ke paar bhi ek baat hai,<br>
+                Tu aaj bhi meri favourite feeling hai.
+              </p>
+            </blockquote>
+          </figure>
+
+          <p class="letter-signoff">Your girlfriend wants to say sorry. ♥</p>
+
+          <div class="action-row" id="one-last-wrap">
+            <button type="button" class="btn-primary btn-lg" id="one-last-btn">One Last Thing</button>
+          </div>
+
+          <!-- Final Virtual Heart Reveal -->
+          <div class="final-hug-card" id="final-hug-card" hidden>
+            <div class="big-heart-wrap" aria-hidden="true">
+              <svg class="big-heart-svg" viewBox="0 0 120 110" width="96" height="88">
+                <path d="M60 100S10 69 10 37.5C10 21.8 22.8 10 38.2 10c9 0 16.4 4.3 21.8 11 5.4-6.7 12.8-11 21.8-11C97.2 10 110 21.8 110 37.5 110 69 60 100 60 100Z" fill="#d62851" stroke="#9e1b3b" stroke-width="3.5" stroke-linejoin="round"/>
+                <path d="M32 24c-5.5 1.5-9.5 6.3-10 12.5-.2 2.2 2.8 2.8 3.4.6.9-3.4 3.6-6.7 7.2-8 1.9-.7 1.4-5.6-.6-5.1Z" fill="#ffd6e5" fill-opacity="0.8"/>
+              </svg>
+              <span class="hug-spark hug-spark-1">✦</span>
+              <span class="hug-spark hug-spark-2">♥</span>
+              <span class="hug-spark hug-spark-3">✦</span>
+            </div>
+            <p class="final-hug-text">Sending you the biggest virtual heart. No pressure, take your time. ♥</p>
+            <div class="final-replay-row">
+              <button type="button" class="btn-secondary" id="final-restart-btn">Play Again ♥</button>
+            </div>
+          </div>
+        </article>
+      </section>
+
+    </main>
+
+    <footer class="game-footer">
+      <p id="footer-credit">Made with ♥ • A Little Mission for You</p>
+    </footer>
+  </div>
+</body>
+</html>
